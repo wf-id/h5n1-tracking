@@ -1,7 +1,7 @@
 # Purpose: retrieve human case data from the web
 library(rvest)
 library(data.table)
-
+library(here)
 uri <- "https://www.cdc.gov/bird-flu/situation-summary/index.html"
 
 # read the html
@@ -18,4 +18,4 @@ table_dt_long[, Cases := as.numeric(Cases)]
 table_dt_long[, UpdateDTS := Sys.time()]
 
 # write to disk
-fwrite(table_dt_long, "data-raw/human_cases.csv", append = TRUE)
+fwrite(table_dt_long, here("data-raw", "human_cases.csv"), append = TRUE)
