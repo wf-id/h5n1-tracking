@@ -1,4 +1,7 @@
 Imports:
   rvest,
   data.table,
-  here
+  here,
+  httr,
+  jsonlite,
+  tidyr
