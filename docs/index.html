@@ -53,15 +53,38 @@
             font-weight: bold;
             color: #2c5282;
         }
+        nav {
+            background-color: #2c5282;
+            padding: 1rem;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: #3a6ba8;
+        }
+        nav a.active {
+            background-color: #1a365d;
+        }
     </style>
 </head>
 <body>
+    <nav>
+        <a href="#" class="active">Human Cases</a>
+        <a href="wastewater.html">Wastewater Data</a>
+    </nav>
+    
     <div class="container">
         <h1>Human Cases Dashboard</h1>
         
         <div class="controls">
             <label>
-                <input type="checkbox" id="logScale" checked>
+                <input type="checkbox" id="logScale">
                 Use Logarithmic Scale
             </label>
         </div>
