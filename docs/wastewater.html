@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wastewater Positivity Rates</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        #controls {
+            margin: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #stateSelect {
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wastewater Positivity Rates by State/Territory</h1>
+        <div id="controls">
+            <label>Select States (hold Ctrl/Cmd to select multiple):</label><br>
+            <select id="stateSelect" multiple style="width: 300px;"></select>
+            <button onclick="updatePlot()">Update Plot</button>
+        </div>
+        <div id="plot"></div>
+    </div>
+
+    <script>
+        let data;
+        let selectedStates = [];
+
+        async function loadData() {
+            try {
+                const response = await fetch('ww_data.json');
+                if (!response.ok) throw new Error('Failed to load data');
+                data = await response.json();
+                
+                // Populate state selector
+                const stateSelect = document.getElementById('stateSelect');
+                data.states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state;
+                    option.text = state;
+                    option.selected = true;  // Initially select all states
+                    stateSelect.appendChild(option);
+                });
+                
+                selectedStates = [...data.states];
+                updatePlot();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('plot').innerHTML = 'Error loading data. Please try again later.';
+            }
+        }
+
+        function updatePlot() {
+            selectedStates = Array.from(document.getElementById('stateSelect').selectedOptions)
+                                .map(option => option.value);
+            
+            const traces = selectedStates.map(state => ({
+                x: data.dates,
+                y: data.data[state].map(val => val * 100), // Convert to percentage
+                name: state,
+                type: 'scatter',
+                mode: 'lines',
+                hovertemplate: '%{y:.1f}%<br>%{x}<extra></extra>'
+            }));
+
+            const layout = {
+                title: 'Wastewater Test Positivity Rate by State/Territory',
+                xaxis: { 
+                    title: 'Date',
+                    tickangle: -45
+                },
+                yaxis: { 
+                    title: 'Percent Positive',
+                    tickformat: '.1f',
+                    ticksuffix: '%',
+                    range: [0, Math.max(5, Math.ceil(Math.max(...traces.flatMap(t => t.y)) / 5) * 5)]
+                },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    x: 1,
+                    xanchor: 'right',
+                    y: 1
+                }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d']
+            };
+
+            Plotly.newPlot('plot', traces, layout, config);
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

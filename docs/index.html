@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Cases Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .summary-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .summary-card h3 {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .summary-card p {
+            margin: 10px 0 0 0;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c5282;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Human Cases Dashboard</h1>
+        
+        <div class="controls">
+            <label>
+                <input type="checkbox" id="logScale" checked>
+                Use Logarithmic Scale
+            </label>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="casesChart"></canvas>
+        </div>
+
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Total Records</h3>
+                <p id="totalRecords">-</p>
+            </div>
+            <div class="summary-card">
+                <h3>Latest Case Count</h3>
+                <p id="latestCases">-</p>
+            </div>
+            <div class="summary-card">
+                <h3>Maximum Cases</h3>
+                <p id="maxCases">-</p>
+            </div>
+            <div class="summary-card">
+                <h3>Minimum Cases</h3>
+                <p id="minCases">-</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chart;
+        let data;
+
+        async function loadData() {
+            const response = await fetch('data.json');
+            data = await response.json();
+            createChart();
+            updateSummary();
+        }
+
+        function createChart() {
+            const ctx = document.getElementById('casesChart').getContext('2d');
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.dates,
+                    datasets: [{
+                        label: 'Cases',
+                        data: data.cases,
+                        borderColor: '#2c5282',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: document.getElementById('logScale').checked ? 'logarithmic' : 'linear',
+                            title: {
+                                display: true,
+                                text: 'Cases'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Human Cases Over Time',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateSummary() {
+            document.getElementById('totalRecords').textContent = data.cases.length;
+            document.getElementById('latestCases').textContent = data.cases[data.cases.length - 1];
+            document.getElementById('maxCases').textContent = Math.max(...data.cases);
+            document.getElementById('minCases').textContent = Math.min(...data.cases);
+        }
+
+        document.getElementById('logScale').addEventListener('change', (e) => {
+            if (chart) {
+                chart.options.scales.y.type = e.target.checked ? 'logarithmic' : 'linear';
+                chart.data.datasets[0].data = e.target.checked ? data.log_cases : data.cases;
+                chart.update();
+            }
+        });
+
+        loadData();
+    </script>
+</body>
+</html> 
