@@ -29,16 +29,22 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         nav {
+            background-color: #2c5282;
+            padding: 1rem;
             margin-bottom: 20px;
+            border-radius: 8px;
         }
         nav a {
-            margin-right: 20px;
+            color: white;
             text-decoration: none;
-            color: #2c5282;
-            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
         }
         nav a:hover {
-            text-decoration: underline;
+            background-color: #3a6ba8;
+        }
+        nav a.active {
+            background-color: #1a365d;
         }
     </style>
 </head>
@@ -46,6 +52,8 @@
     <nav>
         <a href="index.html">H5N1 Cases</a>
         <a href="wastewater.html">Wastewater Data</a>
+        <a href="dairy.html" class="active">Dairy Herds</a>
+        <a href="flocks.html" class="active">Poultry Flocks</a>
     </nav>
     <div class="container">
         <h1>Wastewater Positivity Rates by State/Territory</h1>
@@ -114,7 +122,7 @@
                 showlegend: true,
                 legend: {
                     x: 1,
-                    xanchor: 'right',
+                    xanchor: 'left',
                     y: 1
                 }
             };

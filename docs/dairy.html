@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dairy Farm H5N1 Cases</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        nav {
+            background-color: #2c5282;
+            padding: 1rem;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: #3a6ba8;
+        }
+        nav a.active {
+            background-color: #1a365d;
+        }
+        #controls {
+            margin: 20px;
+        }
+        #stateSelect {
+            min-height: 100px;
+        }
+        .stats-panel {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .total-cases {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c5282;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">H5N1 Cases</a>
+        <a href="wastewater.html">Wastewater Data</a>
+        <a href="dairy.html" class="active">Dairy Herds</a>
+        <a href="flocks.html" class="active">Poultry Flocks</a>
+    </nav>
+    <div class="container">
+        <h1>Cumulative Dairy Farm H5N1 Cases</h1>
+        <div class="stats-panel">
+            <div>Total Cases Across All States</div>
+            <div id="totalCases" class="total-cases">0</div>
+        </div>
+        <div id="controls">
+            <label>Select States (hold Ctrl/Cmd to select multiple):</label><br>
+            <select id="stateSelect" multiple style="width: 300px;"></select>
+            <button onclick="updatePlot()">Update Plot</button>
+        </div>
+        <div id="totalPlot"></div>
+        <div id="plot"></div>
+    </div>
+
+    <script>
+        let rawData;
+        let selectedStates = [];
+
+        function processData(data) {
+            // Convert dates to Date objects and sort chronologically
+            data.forEach(row => {
+                row.date = new Date(row.Confirmed.split('-').reverse().join('-'));
+            });
+            data.sort((a, b) => a.date - b.date);
+
+            // Get unique states
+            const states = [...new Set(data.map(row => row.State))];
+            
+            // Create cumulative counts by state
+            const cumulativeByState = {};
+            states.forEach(state => {
+                const stateCases = data.filter(row => row.State === state);
+                let cumCount = 0;
+                const cumData = stateCases.map(row => {
+                    cumCount++;
+                    return {
+                        date: row.date,
+                        count: cumCount
+                    };
+                });
+                cumulativeByState[state] = cumData;
+            });
+
+            // Create overall cumulative counts by date
+            const dateMap = new Map();
+            data.forEach(row => {
+                const dateStr = row.date.toISOString().split('T')[0];
+                if (!dateMap.has(dateStr)) {
+                    dateMap.set(dateStr, 1);
+                } else {
+                    dateMap.set(dateStr, dateMap.get(dateStr) + 1);
+                }
+            });
+
+            const sortedDates = Array.from(dateMap.keys()).sort();
+            let cumTotal = 0;
+            const overallCumData = sortedDates.map(date => {
+                cumTotal += dateMap.get(date);
+                return {
+                    date: new Date(date),
+                    count: cumTotal
+                };
+            });
+
+            return {
+                states: states,
+                cumulativeData: cumulativeByState,
+                overallCumulative: overallCumData
+            };
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('dairy_tracking.csv');
+                if (!response.ok) throw new Error('Failed to load data');
+                const csvText = await response.text();
+                
+                // Parse CSV
+                const lines = csvText.split('\n');
+                const headers = lines[0].split('\t');
+                rawData = lines.slice(1)
+                    .filter(line => line.trim())
+                    .map(line => {
+                        const values = line.split('\t');
+                        return headers.reduce((obj, header, i) => {
+                            obj[header] = values[i];
+                            return obj;
+                        }, {});
+                    });
+
+                const processedData = processData(rawData);
+                
+                // Populate state selector
+                const stateSelect = document.getElementById('stateSelect');
+                processedData.states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state;
+                    option.text = state;
+                    option.selected = true;  // Initially select all states
+                    stateSelect.appendChild(option);
+                });
+                
+                selectedStates = [...processedData.states];
+                updatePlot();
+                
+                // Update total cases
+                document.getElementById('totalCases').textContent = rawData.length.toLocaleString();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('plot').innerHTML = 'Error loading data. Please try again later.';
+            }
+        }
+
+        function updatePlot() {
+            selectedStates = Array.from(document.getElementById('stateSelect').selectedOptions)
+                                .map(option => option.value);
+            
+            const processedData = processData(rawData);
+
+            // Plot total cases over time
+            const totalTrace = [{
+                x: processedData.overallCumulative.map(d => d.date),
+                y: processedData.overallCumulative.map(d => d.count),
+                name: 'Total Cases',
+                type: 'scatter',
+                mode: 'lines',
+                line: {
+                    color: '#2c5282',
+                    width: 3
+                },
+                hovertemplate: '%{y} total herds<br>%{x|%B %d, %Y}<extra></extra>'
+            }];
+
+            const totalLayout = {
+                title: 'Total Cumulative Dairy Farm H5N1 Herds',
+                xaxis: { 
+                    title: 'Date',
+                    tickangle: -45
+                },
+                yaxis: { 
+                    title: 'Total Cumulative Cases',
+                    tickformat: 'd'
+                },
+                hovermode: 'closest',
+                height: 300,
+                margin: {
+                    b: 50,
+                    t: 50
+                }
+            };
+
+            // Plot cases by state
+            const stateTraces = selectedStates.map(state => ({
+                x: processedData.cumulativeData[state].map(d => d.date),
+                y: processedData.cumulativeData[state].map(d => d.count),
+                name: state,
+                type: 'scatter',
+                mode: 'lines',
+                hovertemplate: '%{y} cases<br>%{x|%B %d, %Y}<extra></extra>'
+            }));
+
+            const stateLayout = {
+                title: 'Cumulative Dairy Farm H5N1 Cases by State',
+                xaxis: { 
+                    title: 'Date',
+                    tickangle: -45
+                },
+                yaxis: { 
+                    title: 'Cumulative Number of Cases',
+                    tickformat: 'd'
+                },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    x: 1,
+                    xanchor: 'left',
+                    y: 1
+                }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d']
+            };
+
+            Plotly.newPlot('totalPlot', totalTrace, totalLayout, config);
+            Plotly.newPlot('plot', stateTraces, stateLayout, config);
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
