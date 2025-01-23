@@ -76,6 +76,7 @@
         </div>
         <div id="totalPlot"></div>
         <div id="plot"></div>
+        <div id="mapPlot"></div>
     </div>
 
     <script>
@@ -83,19 +84,22 @@
         let selectedStates = [];
 
         function processData(data) {
-            // Convert dates to Date objects and sort chronologically
-            data.forEach(row => {
-                row.date = new Date(row.Confirmed.split('-').reverse().join('-'));
-            });
-            data.sort((a, b) => a.date - b.date);
+            // Convert the array format data into array of objects
+            const records = data.dates.map((date, index) => ({
+                date: new Date(date),
+                state: data.states[index]
+            }));
+            
+            // Sort chronologically
+            records.sort((a, b) => a.date - b.date);
 
             // Get unique states
-            const states = [...new Set(data.map(row => row.State))];
+            const states = [...new Set(data.states)];
             
             // Create cumulative counts by state
             const cumulativeByState = {};
             states.forEach(state => {
-                const stateCases = data.filter(row => row.State === state);
+                const stateCases = records.filter(row => row.state === state);
                 let cumCount = 0;
                 const cumData = stateCases.map(row => {
                     cumCount++;
@@ -109,7 +113,7 @@
 
             // Create overall cumulative counts by date
             const dateMap = new Map();
-            data.forEach(row => {
+            records.forEach(row => {
                 const dateStr = row.date.toISOString().split('T')[0];
                 if (!dateMap.has(dateStr)) {
                     dateMap.set(dateStr, 1);
@@ -128,31 +132,27 @@
                 };
             });
 
+            // Calculate state presence since 2023
+            const statePresence = {};
+            const since2023 = new Date('2023-01-01');
+            states.forEach(state => {
+                const stateCases = records.filter(row => row.state === state && row.date >= since2023);
+                statePresence[state] = stateCases.length > 0 ? 1 : 0;
+            });
+
             return {
                 states: states,
                 cumulativeData: cumulativeByState,
-                overallCumulative: overallCumData
+                overallCumulative: overallCumData,
+                statePresence: statePresence
             };
         }
 
         async function loadData() {
             try {
-                const response = await fetch('poultry_tracking.csv');
+                const response = await fetch('poultry_data.json');
                 if (!response.ok) throw new Error('Failed to load data');
-                const csvText = await response.text();
-                
-                // Parse CSV
-                const lines = csvText.split('\n');
-                const headers = lines[0].split('\t');
-                rawData = lines.slice(1)
-                    .filter(line => line.trim())
-                    .map(line => {
-                        const values = line.split('\t');
-                        return headers.reduce((obj, header, i) => {
-                            obj[header] = values[i];
-                            return obj;
-                        }, {});
-                    });
+                rawData = await response.json();
 
                 const processedData = processData(rawData);
                 
@@ -170,7 +170,7 @@
                 updatePlot();
                 
                 // Update total cases
-                document.getElementById('totalCases').textContent = rawData.length.toLocaleString();
+                document.getElementById('totalCases').textContent = rawData.dates.length.toLocaleString();
             } catch (error) {
                 console.error('Error loading data:', error);
                 document.getElementById('plot').innerHTML = 'Error loading data. Please try again later.';
@@ -251,8 +251,53 @@
                 modeBarButtonsToRemove: ['lasso2d', 'select2d']
             };
 
+            // After existing plots, add the map
+            const stateAbbreviations = {
+                'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+                'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+                'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+                'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+                'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+                'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+                'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+                'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+                'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+                'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
+            };
+
+            // Create map data
+            const mapData = [{
+                type: 'choropleth',
+                locationmode: 'USA-states',
+                locations: Object.keys(stateAbbreviations).map(state => stateAbbreviations[state]),
+                z: Object.keys(stateAbbreviations).map(state => processedData.statePresence[state] || 0),
+                text: Object.keys(stateAbbreviations).map(state => 
+                    `${state}: ${processedData.statePresence[state] ? 'Cases Detected Since 2023' : 'No Cases Since 2023'}`
+                ),
+                colorscale: [[0, '#f8fafc'], [1, '#2c5282']],
+                showscale: false,
+                hovertemplate: '%{text}<extra></extra>'
+            }];
+
+            const mapLayout = {
+                title: 'States with H5N1 Cases Detected Since 2023',
+                geo: {
+                    scope: 'usa',
+                    showlakes: true,
+                    lakecolor: 'rgb(255,255,255)'
+                },
+                height: 400,
+                margin: {
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 30
+                }
+            };
+
             Plotly.newPlot('totalPlot', totalTrace, totalLayout, config);
             Plotly.newPlot('plot', stateTraces, stateLayout, config);
+            Plotly.newPlot('mapPlot', mapData, mapLayout, config);
         }
 
         loadData();

@@ -548,3 +548,72 @@ case $COMMAND in
         ShowHelpAndExit
         ;;
 esac
+
+curl 'https://publicdashboards.dl.usda.gov/vizql/t/MRP_PUB/w/VS_Cattle_HPAIConfirmedDetections2024/v/HPAI2022ConfirmedDetections/sessions/96C26CF4B5E44F149F0AC3B62A04E5EC-1:0/commands/tabsrv/export-crosstab-to-csvserver' \
+  -H 'Accept: text/javascript' \
+  -H 'Accept-Language: en-US,en;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: multipart/form-data; boundary=tBmfrUwJ' \
+  -H 'Cookie: cookiesession1=678A3E48DEF7713395A10680E38DBFBC; nmstat=001937e8-7a4d-d04b-f95f-01101a39250c; tableau_locale=en' \
+  -H 'DNT: 1' \
+  -H 'Origin: https://publicdashboards.dl.usda.gov' \
+  -H 'Referer: https://publicdashboards.dl.usda.gov/t/MRP_PUB/views/VS_Cattle_HPAIConfirmedDetections2024/HPAI2022ConfirmedDetections?%3Aembed=y&%3AisGuestRedirectFromVizportal=y' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  -H 'X-Tableau-Version: 2024.2' \
+  -H 'X-Tsi-Active-Tab: HPAI%202022%20Confirmed%20Detections' \
+  -H 'sec-ch-ua: "Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: "Android"' \
+  --data-raw $'--tBmfrUwJ\r\nContent-Disposition: form-data; name="sheetdocId"\r\n\r\n{4EAB148A-619E-4E6C-8657-401D6A93B3F8}\r\n--tBmfrUwJ\r\nContent-Disposition: form-data; name="useTabs"\r\n\r\ntrue\r\n--tBmfrUwJ\r\nContent-Disposition: form-data; name="sendNotifications"\r\n\r\ntrue\r\n--tBmfrUwJ\r\nContent-Disposition: form-data; name="telemetryCommandId"\r\n\r\n1ihh5652n$mv31-qy-61-t8-qr6qzv\r\n--tBmfrUwJ--\r\n'
+
+
+POST /vizql/t/MRP_PUB/w/VS_Cattle_HPAIConfirmedDetections2024/v/HPAI2022ConfirmedDetections/sessions/320ACCE311BF4C61B60F2625625EF240-1:1/commands/tabsrv/export-crosstab-to-csvserver HTTP/1.1
+Accept: text/javascript
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Connection: keep-alive
+Content-Length: 370
+Content-Type: multipart/form-data; boundary=ahDRNPnt
+Cookie: cookiesession1=678A3E48DEF7713395A10680E38DBFBC; nmstat=001937e8-7a4d-d04b-f95f-01101a39250c; tableau_locale=en
+DNT: 1
+Host: publicdashboards.dl.usda.gov
+Origin: https://publicdashboards.dl.usda.gov
+Referer: https://publicdashboards.dl.usda.gov/t/MRP_PUB/views/VS_Cattle_HPAIConfirmedDetections2024/HPAI2022ConfirmedDetections?%3Aembed=y&%3AisGuestRedirectFromVizportal=y
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36
+X-Requested-With: XMLHttpRequest
+X-Tableau-Version: 2024.2
+X-Tsi-Active-Tab: HPAI%202022%20Confirmed%20Detections
+sec-ch-ua: "Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"
+sec-ch-ua-mobile: ?1
+sec-ch-ua-platform: "Android"
+
+
+HTTP/1.1 200
+Date: Tue, 14 Jan 2025 13:17:05 GMT
+Server: Tableau
+X-Tsi-Request-Id: Z4Zj0np9Is1AIw_M9IcHrAAAAJA
+Cache-Control: private, max-age=0, must-revalidate
+Content-Type: application/octet-stream;charset=UTF-8
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Tableau: Tableau Server
+P3P: CP="NON"
+X-UA-Compatible: IE=Edge
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Referrer-Policy: no-referrer-when-downgrade
+Content-Security-Policy-Report-Only: connect-src * https://*.tiles.mapbox.com https://api.mapbox.com; default-src blob:; font-src * data:; frame-src * data: tableau-desktop:; img-src * data: blob:; object-src data:; report-uri /vizql/csp-report; script-src * blob: 'wasm-unsafe-eval'; style-src * 'unsafe-inline'
+Content-Length: 540
+Keep-Alive: timeout=8, max=98
+Connection: Keep-Alive
+
+
+https://publicdashboards.dl.usda.gov/t/MRP_PUB/views/VS_Cattle_HPAIConfirmedDetections2024/HPAI2022ConfirmedDetections
+

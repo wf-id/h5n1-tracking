@@ -7,6 +7,23 @@ load_case_data <- function() {
   return(fat)
 }
 
+# Add this function to handle UTF-8 conversion
+convert_to_utf8 <- function(input_file, output_file) {
+  # Read the file with detection of encoding
+  data <- readLines(input_file, encoding = "latin1", warn = FALSE)
+  
+  # Write back in UTF-8
+  writeLines(data, output_file, useBytes = TRUE)
+}
+
+# Convert the files
+dat_dairy <- read.csv("data-raw/dairy_tracking.csv", sep="\t", fileEncoding = "UCS-2LE", stringsAsFactors=FALSE) |>
+  as.data.table()
+
+dat_poultry <- read.csv("data-raw/poultry_tracking.csv", sep="\t", fileEncoding = "UCS-2LE", stringsAsFactors=FALSE) |>
+  as.data.table()
+
+
 total_cases <- load_case_data()[State == "Source Total" & Source == "State Total"]
 
 # Function to create the time series plot
@@ -46,6 +63,43 @@ json_data <- toJSON(
 # Write to file
 writeLines(json_data, here::here("docs", "data.json"))
 
+# Dairy ------------------------------------------
+
+dat_dairy[,.(Cases = .N), by = .(Confirmed, State)]
+
+generate_dairy_json <- function(dat_dairy) {
+  z <- dat_dairy[,.(Cases = .N), by = .(Confirmed, State)]
+  z[order(Confirmed, State)]
+
+  toJSON(
+  list(
+    dates = z$Confirmed,
+    cases = z$Cases,
+    states = z$State
+  ),
+  auto_unbox = TRUE
+)
+}
+
+generate_poultry_json <- function(dat_poultry) {
+  z <- dat_poultry[,.(Cases = .N), by = .(Confirmed, State)][
+    ,Confirmed := as.Date(Confirmed, "%d-%b-%y")
+  ]
+  z <- z[order(Confirmed, State)]
+
+  toJSON(
+  list(
+    dates = z$Confirmed,
+    cases = z$Cases,
+    states = z$State
+  ),
+  auto_unbox = TRUE
+)
+}
+generate_poultry_json(dat_poultry)
+
+writeLines(generate_dairy_json(dat_dairy), here::here("docs", "dairy_data.json"))
+writeLines(generate_poultry_json(dat_poultry), here::here("docs", "poultry_data.json"))
 dat_ww <- fread(here::here("data-raw", "ww_cases.csv"))
 
 dat_ww[,DateDT := as.Date(DateDT, "%m/%d/%Y")]

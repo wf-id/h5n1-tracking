@@ -83,45 +83,57 @@
         let selectedStates = [];
 
         function processData(data) {
-            // Convert dates to Date objects and sort chronologically
-            data.forEach(row => {
-                row.date = new Date(row.Confirmed.split('-').reverse().join('-'));
-            });
-            data.sort((a, b) => a.date - b.date);
+            // Convert dates to Date objects
+            const dates = data.dates.map(d => new Date(d));
+            const states = data.states;
+            const cases = data.cases;
 
-            // Get unique states
-            const states = [...new Set(data.map(row => row.State))];
-            
             // Create cumulative counts by state
             const cumulativeByState = {};
-            states.forEach(state => {
-                const stateCases = data.filter(row => row.State === state);
-                let cumCount = 0;
-                const cumData = stateCases.map(row => {
-                    cumCount++;
-                    return {
-                        date: row.date,
-                        count: cumCount
-                    };
-                });
-                cumulativeByState[state] = cumData;
+            const stateIndices = {};
+            
+            states.forEach((state, i) => {
+                if (!stateIndices[state]) {
+                    stateIndices[state] = [];
+                }
+                stateIndices[state].push(i);
             });
 
-            // Create overall cumulative counts by date
-            const dateMap = new Map();
-            data.forEach(row => {
-                const dateStr = row.date.toISOString().split('T')[0];
-                if (!dateMap.has(dateStr)) {
-                    dateMap.set(dateStr, 1);
+            Object.keys(stateIndices).forEach(state => {
+                const stateCases = stateIndices[state].map(i => ({
+                    date: dates[i],
+                    count: cases[i]
+                }));
+                
+                // Sort by date
+                stateCases.sort((a, b) => a.date - b.date);
+                
+                // Calculate cumulative sum
+                let cumSum = 0;
+                cumulativeByState[state] = stateCases.map(d => {
+                    cumSum += d.count;
+                    return {
+                        date: d.date,
+                        count: cumSum
+                    };
+                });
+            });
+
+            // Calculate overall cumulative
+            const overallByDate = new Map();
+            dates.forEach((date, i) => {
+                const dateStr = date.toISOString().split('T')[0];
+                if (!overallByDate.has(dateStr)) {
+                    overallByDate.set(dateStr, cases[i]);
                 } else {
-                    dateMap.set(dateStr, dateMap.get(dateStr) + 1);
+                    overallByDate.set(dateStr, overallByDate.get(dateStr) + cases[i]);
                 }
             });
 
-            const sortedDates = Array.from(dateMap.keys()).sort();
+            const sortedDates = Array.from(overallByDate.keys()).sort();
             let cumTotal = 0;
             const overallCumData = sortedDates.map(date => {
-                cumTotal += dateMap.get(date);
+                cumTotal += overallByDate.get(date);
                 return {
                     date: new Date(date),
                     count: cumTotal
@@ -129,7 +141,7 @@
             });
 
             return {
-                states: states,
+                states: Object.keys(stateIndices),
                 cumulativeData: cumulativeByState,
                 overallCumulative: overallCumData
             };
@@ -137,23 +149,10 @@
 
         async function loadData() {
             try {
-                const response = await fetch('dairy_tracking.csv');
+                const response = await fetch('dairy_data.json');
                 if (!response.ok) throw new Error('Failed to load data');
-                const csvText = await response.text();
+                rawData = await response.json();
                 
-                // Parse CSV
-                const lines = csvText.split('\n');
-                const headers = lines[0].split('\t');
-                rawData = lines.slice(1)
-                    .filter(line => line.trim())
-                    .map(line => {
-                        const values = line.split('\t');
-                        return headers.reduce((obj, header, i) => {
-                            obj[header] = values[i];
-                            return obj;
-                        }, {});
-                    });
-
                 const processedData = processData(rawData);
                 
                 // Populate state selector
@@ -170,7 +169,8 @@
                 updatePlot();
                 
                 // Update total cases
-                document.getElementById('totalCases').textContent = rawData.length.toLocaleString();
+                const totalCases = rawData.cases.reduce((a, b) => a + b, 0);
+                document.getElementById('totalCases').textContent = totalCases.toLocaleString();
             } catch (error) {
                 console.error('Error loading data:', error);
                 document.getElementById('plot').innerHTML = 'Error loading data. Please try again later.';
