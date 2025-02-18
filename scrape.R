@@ -7,18 +7,60 @@ uri <- "https://www.cdc.gov/bird-flu/situation-summary/index.html"
 # read the html
 page <- read_html(uri)
 
-# extract the table
-table <- html_table(page)
+# find the button element and extract its href
+# Human cases
 
-table_dt <- setDT(table[[1]])
+# Use chromote for browser automation
+library(chromote)
 
-table_dt_long <- melt(table_dt, id.vars = c("State"), variable.name = "Source", value.name = "Cases")
+# Start a new browser session
+b <- ChromoteSession$new()
+
+# Navigate to the page
+b$Page$navigate(uri)
+Sys.sleep(2)  # Give page time to load
+
+# Enable download handling
+b$Browser$setDownloadBehavior(
+  behavior = "allow",
+  downloadPath = tempdir()
+)
+
+# Click the download button using JavaScript
+b$Runtime$evaluate("
+  document.querySelector('a[download=\"data-table.csv\"]').click();
+")
+
+# Wait briefly for download
+Sys.sleep(3)
+
+# Find the downloaded file
+csv_file <- list.files(
+  path = tempdir(),
+  pattern = "data-table\\.csv$",
+  full.names = TRUE
+)[1]
+
+# Read and process the data
+if (!is.na(csv_file)) {
+  csv_data <- fread(csv_file)
+  csv_data[, UpdateDTS := Sys.time()]
+  
+  # Write to destination
+  table_dt_long <- melt(csv_data, id.vars = c("State"), variable.name = "Source", value.name = "Cases")
 
 table_dt_long[, Cases := as.numeric(Cases)]
 table_dt_long[, UpdateDTS := Sys.time()]
-
-# write to disk
 fwrite(table_dt_long, here("data-raw", "human_cases.csv"), append = TRUE)
+  
+  # Clean up
+  file.remove(csv_file)
+}
+
+# Close the browser
+b$close()
+
+
 
 # Get WW data
 
@@ -35,3 +77,5 @@ dat_long <- dat |>
   tidyr::gather(DateDT, StatusDT, -Sewershed, -`State/Territory`, -County, -UpdateDTS)
 
 fwrite(dat_long, here("data-raw", "ww_cases.csv"), append = TRUE)
+
+
