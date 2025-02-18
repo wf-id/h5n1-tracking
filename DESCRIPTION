@@ -4,4 +4,5 @@ Imports:
   here,
   httr,
   jsonlite,
-  tidyr
+  tidyr,
+  chromote

@@ -62,6 +62,8 @@ jobs:
       #     pkgs <- installed.packages()[, "Package"]
       #     sessioninfo::session_info(pkgs, include_base = TRUE)
       #   shell: Rscript {0}
+      - uses: browser-actions/setup-chrome@v1
+      - run: chrome --version
       - name: Setup just
         uses: extractions/setup-just@v1
 
