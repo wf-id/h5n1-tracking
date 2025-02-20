@@ -2715,3 +2715,94 @@ Texas,UpdateDTS,1740003002.49649,2025-02-19T22:10:02.498207Z
 Washington,UpdateDTS,1740003002.49649,2025-02-19T22:10:02.498207Z
 Wisconsin,UpdateDTS,1740003002.49649,2025-02-19T22:10:02.498207Z
 Wyoming,UpdateDTS,1740003002.49649,2025-02-19T22:10:02.498207Z
+National,Dairy Herds,41,2025-02-20T22:10:29.038421Z
+California,Dairy Herds,36,2025-02-20T22:10:29.038421Z
+Colorado,Dairy Herds,1,2025-02-20T22:10:29.038421Z
+Iowa,Dairy Herds,0,2025-02-20T22:10:29.038421Z
+Louisiana,Dairy Herds,0,2025-02-20T22:10:29.038421Z
+Michigan,Dairy Herds,2,2025-02-20T22:10:29.038421Z
+Missouri,Dairy Herds,0,2025-02-20T22:10:29.038421Z
+Nevada,Dairy Herds,1,2025-02-20T22:10:29.038421Z
+Oregon,Dairy Herds,0,2025-02-20T22:10:29.038421Z
+Texas,Dairy Herds,1,2025-02-20T22:10:29.038421Z
+Washington,Dairy Herds,0,2025-02-20T22:10:29.038421Z
+Wisconsin,Dairy Herds,0,2025-02-20T22:10:29.038421Z
+Wyoming,Dairy Herds,0,2025-02-20T22:10:29.038421Z
+National,Poultry Farms and Culling Operations,23,2025-02-20T22:10:29.038421Z
+California,Poultry Farms and Culling Operations,0,2025-02-20T22:10:29.038421Z
+Colorado,Poultry Farms and Culling Operations,9,2025-02-20T22:10:29.038421Z
+Iowa,Poultry Farms and Culling Operations,1,2025-02-20T22:10:29.038421Z
+Louisiana,Poultry Farms and Culling Operations,0,2025-02-20T22:10:29.038421Z
+Michigan,Poultry Farms and Culling Operations,0,2025-02-20T22:10:29.038421Z
+Missouri,Poultry Farms and Culling Operations,0,2025-02-20T22:10:29.038421Z
+Nevada,Poultry Farms and Culling Operations,0,2025-02-20T22:10:29.038421Z
+Oregon,Poultry Farms and Culling Operations,1,2025-02-20T22:10:29.038421Z
+Texas,Poultry Farms and Culling Operations,0,2025-02-20T22:10:29.038421Z
+Washington,Poultry Farms and Culling Operations,11,2025-02-20T22:10:29.038421Z
+Wisconsin,Poultry Farms and Culling Operations,1,2025-02-20T22:10:29.038421Z
+Wyoming,Poultry Farms and Culling Operations,0,2025-02-20T22:10:29.038421Z
+National,Other Animal Exposure,2,2025-02-20T22:10:29.038421Z
+California,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Colorado,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Iowa,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Louisiana,Other Animal Exposure,1,2025-02-20T22:10:29.038421Z
+Michigan,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Missouri,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Nevada,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Oregon,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Texas,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Washington,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Wisconsin,Other Animal Exposure,0,2025-02-20T22:10:29.038421Z
+Wyoming,Other Animal Exposure,1,2025-02-20T22:10:29.038421Z
+National,Exposure Source Unknown,3,2025-02-20T22:10:29.038421Z
+California,Exposure Source Unknown,2,2025-02-20T22:10:29.038421Z
+Colorado,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Iowa,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Louisiana,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Michigan,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Missouri,Exposure Source Unknown,1,2025-02-20T22:10:29.038421Z
+Nevada,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Oregon,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Texas,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Washington,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Wisconsin,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+Wyoming,Exposure Source Unknown,0,2025-02-20T22:10:29.038421Z
+National,State Total,69,2025-02-20T22:10:29.038421Z
+California,State Total,38,2025-02-20T22:10:29.038421Z
+Colorado,State Total,10,2025-02-20T22:10:29.038421Z
+Iowa,State Total,1,2025-02-20T22:10:29.038421Z
+Louisiana,State Total,1,2025-02-20T22:10:29.038421Z
+Michigan,State Total,2,2025-02-20T22:10:29.038421Z
+Missouri,State Total,1,2025-02-20T22:10:29.038421Z
+Nevada,State Total,1,2025-02-20T22:10:29.038421Z
+Oregon,State Total,1,2025-02-20T22:10:29.038421Z
+Texas,State Total,1,2025-02-20T22:10:29.038421Z
+Washington,State Total,11,2025-02-20T22:10:29.038421Z
+Wisconsin,State Total,1,2025-02-20T22:10:29.038421Z
+Wyoming,State Total,1,2025-02-20T22:10:29.038421Z
+National,Category,,2025-02-20T22:10:29.038421Z
+California,Category,,2025-02-20T22:10:29.038421Z
+Colorado,Category,,2025-02-20T22:10:29.038421Z
+Iowa,Category,,2025-02-20T22:10:29.038421Z
+Louisiana,Category,,2025-02-20T22:10:29.038421Z
+Michigan,Category,,2025-02-20T22:10:29.038421Z
+Missouri,Category,,2025-02-20T22:10:29.038421Z
+Nevada,Category,,2025-02-20T22:10:29.038421Z
+Oregon,Category,,2025-02-20T22:10:29.038421Z
+Texas,Category,,2025-02-20T22:10:29.038421Z
+Washington,Category,,2025-02-20T22:10:29.038421Z
+Wisconsin,Category,,2025-02-20T22:10:29.038421Z
+Wyoming,Category,,2025-02-20T22:10:29.038421Z
+National,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+California,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Colorado,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Iowa,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Louisiana,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Michigan,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Missouri,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Nevada,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Oregon,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Texas,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Washington,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Wisconsin,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
+Wyoming,UpdateDTS,1740089429.03693,2025-02-20T22:10:29.038421Z
