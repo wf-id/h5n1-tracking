@@ -44,7 +44,6 @@ csv_file <- list.files(
 # Read and process the data
 if (!is.na(csv_file)) {
   csv_data <- fread(csv_file)
-  csv_data[, UpdateDTS := Sys.time()]
   
   # Write to destination
   table_dt_long <- melt(csv_data, id.vars = c("State"), variable.name = "Source", value.name = "Cases")

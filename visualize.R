@@ -24,7 +24,9 @@ dat_poultry <- read.csv("data-raw/poultry_tracking.csv", sep="\t", fileEncoding 
   as.data.table()
 
 
-total_cases <- load_case_data()[State == "Source Total" & Source == "State Total"]
+total_cases <- load_case_data()[State %in% c("National", "Source Total") & Source == "State Total"]
+
+total_cases[, Cases := as.numeric(Cases) ]
 
 # Function to create the time series plot
 create_cases_plot <- function(data, log_scale = FALSE) {
